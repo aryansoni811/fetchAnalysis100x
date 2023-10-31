@@ -1,4 +1,8 @@
 const getData = async () => {
+  let maxWord,
+    count = 0,
+    maxCount = 0;
+
   await fetch(
     "https://one00x-data-analysis.onrender.com/assignment?email=arpitsoni811@gmail.com"
   )
@@ -9,10 +13,8 @@ const getData = async () => {
       } else console.error("Call Not Successful");
     })
     .then((data) => {
-      //   console.log(data.sort());
-      let maxWord,
-        count = 0,
-        maxCount = 0;
+      data.sort();
+      console.log(data);
 
       for (let i = 0; i < 99; i++) {
         if (data[i] === data[i + 1]) {
@@ -26,12 +28,12 @@ const getData = async () => {
         }
       }
       console.log(maxWord);
-      return maxWord;
     });
+  return maxWord;
 };
 
 const postData = async (result) => {
-  fetch(
+  await fetch(
     "https://one00x-data-analysis.onrender.com/assignment?email=arpitsoni811@gmail.com",
     {
       method: "POST",
@@ -58,11 +60,12 @@ const postData = async (result) => {
 };
 
 const getThenPost = async () => {
-  let maxWord = await getData();
+  let word = await getData();
   let result = {
-    word: maxWord,
-    assignmentId: "dfd1ac15-0ca3-4b23-af8b-5a5b44c6c0a2",
+    assignment_id: "dfd1ac15-0ca3-4b23-af8b-5a5b44c6c0a2",
+    answer: `${word}`,
   };
+  console.log(result);
   await postData(result);
 };
 
