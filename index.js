@@ -1,35 +1,47 @@
-const getData = async () => {
+const findMaxWord = (data) => {
   let maxWord,
     count = 0,
     maxCount = 0;
 
-  await fetch(
-    "https://one00x-data-analysis.onrender.com/assignment?email=arpitsoni811@gmail.com"
-  )
-    .then((response) => {
-      if (response.ok) {
-        console.log("Call Successful.");
-        return response.json();
-      } else console.error("Call Not Successful");
-    })
-    .then((data) => {
-      data.sort();
-      console.log(data);
-
-      for (let i = 0; i < 99; i++) {
-        if (data[i] === data[i + 1]) {
-          count++;
-        } else {
-          if (maxCount < count) {
-            maxCount = count;
-            maxWord = data[i - 1];
-          }
-          count = 0;
-        }
+  for (let i = 0; i < 99; i++) {
+    if (data[i] === data[i + 1]) {
+      count++;
+    } else {
+      if (maxCount < count) {
+        maxCount = count;
+        maxWord = data[i - 1];
       }
-      console.log(maxWord);
-    });
+      count = 0;
+    }
+  }
+  console.log(maxWord);
   return maxWord;
+};
+
+const getData = async () => {
+  let maxWord, xAssignmentId;
+  try {
+    await fetch(
+      "https://one00x-data-analysis.onrender.com/assignment?email=arpitsoni811@gmail.com"
+    )
+      .then((response) => {
+        if (response.ok) {
+          console.log("Call Successful.");
+          xAssignmentId = response.headers.get("x-assignment-id");
+          return response.json();
+        } else {
+          console.error("Call Not Successful");
+          throw Error;
+        }
+      })
+      .then((data) => {
+        data.sort();
+        maxWord = findMaxWord(data);
+      });
+    return { assignment_id: `${xAssignmentId}`, answer: `${maxWord}` };
+  } catch (error) {
+    console.log("API not working.");
+  }
 };
 
 const postData = async (result) => {
@@ -60,29 +72,9 @@ const postData = async (result) => {
 };
 
 const getThenPost = async () => {
-  let word = await getData();
-  let result = {
-    assignment_id: "dfd1ac15-0ca3-4b23-af8b-5a5b44c6c0a2",
-    answer: `${word}`,
-  };
+  let result = await getData();
   console.log(result);
   await postData(result);
 };
 
 getThenPost();
-// x-assignment-id : dfd1ac15-0ca3-4b23-af8b-5a5b44c6c0a2
-
-// async function fetchData() {
-//   try {
-//     const response = await fetch(
-//       "https://one00x-data-analysis.onrender.com/assignment"
-//     );
-//     if (!response.ok) {
-//       throw new Error("Can't fetch api data");
-//     }
-//     let data = await response.json();
-//     console.log(data);
-//   } catch (err) {
-//     console.log(err);
-//   }
-// }
